@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:number_trivia_tdd_2/features/domain/entities/number_trivia.dart';
 import 'package:meta/meta.dart';
 
+// this because if we had to change from JSON to Gson Or some other form
+// we can just change this instead of NumberTrivia CLass itself
 class NumberTriviaModel extends NumberTrivia {
   NumberTriviaModel({
     @required String text,
