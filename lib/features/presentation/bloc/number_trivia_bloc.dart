@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
 import 'package:number_trivia_tdd_2/core/error/failures.dart';
+import 'package:number_trivia_tdd_2/core/usecases/usecase.dart';
 import 'package:number_trivia_tdd_2/core/util/input_converter.dart';
 import 'package:number_trivia_tdd_2/features/domain/entities/number_trivia.dart';
 import 'package:number_trivia_tdd_2/features/domain/usecases/get_concrete_number_trivia.dart';
@@ -19,7 +21,7 @@ const String INVALID_INPUT_FAILURE_MESSAGE =
 
 class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
   final GetConcreteNumberTrivia getConcreteNumberTrivia;
-  final GetRandomNumberTrivia getrandomNumberTrivia;
+  final GetRandomNumberTrivia getRandomNumberTrivia;
   final InputConverter inputConverter;
 
   NumberTriviaBloc({
@@ -30,7 +32,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
         assert(random != null),
         assert(inputConverter != null),
         getConcreteNumberTrivia = concrete,
-        getrandomNumberTrivia = random,
+        getRandomNumberTrivia = random,
         super(Empty());
 
   @override
@@ -49,9 +51,35 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
           yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
         },
         (integer) async* {
-          yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
+          yield Loading();
+          final failureOrTrivia =
+              await getConcreteNumberTrivia(Params(number: integer));
+          yield* _eitherLoadedOrErrorState(failureOrTrivia);
         },
       );
+    } else if (event is GetTriviaForRandomNumber) {
+      yield Loading();
+      final failureOrTrivia = await getRandomNumberTrivia(NoParams());
+      yield* _eitherLoadedOrErrorState(failureOrTrivia);
+    }
+  }
+
+  Stream<NumberTriviaState> _eitherLoadedOrErrorState(
+    Either<Failure, NumberTrivia> failureOrTrivia,
+  ) async* {
+    yield failureOrTrivia.fold(
+        (failure) => Error(message: _mapFailureToMessage(failure)),
+        (trivia) => Loaded(trivia: trivia));
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return SERVER_FAILURE_MESSAGE;
+      case CacheFailure:
+        return CACHE_FAILURE_MESSAGE;
+      default:
+        return 'Unexpected error';
     }
   }
 }
