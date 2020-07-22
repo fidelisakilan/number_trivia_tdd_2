@@ -64,7 +64,7 @@ void main() {
 
       //assert
       final expected = [
-        Empty(),
+        // Empty(),
         Error(message: INVALID_INPUT_FAILURE_MESSAGE),
       ];
       expectLater(bloc, emitsInOrder(expected));
@@ -96,7 +96,7 @@ void main() {
 
       //assert later
       final expected = [
-        Empty(),
+        // Empty(),
         Loading(),
         Loaded(trivia: tNumberTrivia),
       ];
@@ -113,7 +113,7 @@ void main() {
 
       //assert later
       final expected = [
-        Empty(),
+        // Empty(),
         Loading(),
         Error(message: SERVER_FAILURE_MESSAGE)
       ];
@@ -131,7 +131,7 @@ void main() {
 
       //assert later
       final expected = [
-        Empty(),
+        //   Empty(),
         Loading(),
         Error(message: CACHE_FAILURE_MESSAGE),
       ];
@@ -172,7 +172,7 @@ void main() {
             .thenAnswer((_) async => Right(tNumberTrivia));
         // assert later
         final expected = [
-          Empty(),
+          // Empty(),
           Loading(),
           Loaded(trivia: tNumberTrivia),
         ];
@@ -190,7 +190,7 @@ void main() {
             .thenAnswer((_) async => Left(ServerFailure()));
         // assert later
         final expected = [
-          Empty(),
+          //   Empty(),
           Loading(),
           Error(message: SERVER_FAILURE_MESSAGE),
         ];
@@ -208,7 +208,7 @@ void main() {
             .thenAnswer((_) async => Left(CacheFailure()));
         // assert later
         final expected = [
-          Empty(),
+          // Empty(),
           Loading(),
           Error(message: CACHE_FAILURE_MESSAGE),
         ];
