@@ -11,7 +11,6 @@ import 'package:number_trivia_tdd_2/features/presentation/bloc/number_trivia_blo
 
 class MockGetConcreteNumberTrivia extends Mock
     implements GetConcreteNumberTrivia {}
-
 class MockGetRandomNumberTrivia extends Mock implements GetRandomNumberTrivia {}
 
 class MockInputConverter extends Mock implements InputConverter {}
